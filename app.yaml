@@ -1,0 +1,72 @@
+runtime: nodejs22
+
+instance_class: F1
+
+automatic_scaling:
+  min_idle_instances: 0
+  max_idle_instances: 1
+  min_pending_latency: 30ms
+  max_pending_latency: automatic
+  max_concurrent_requests: 50
+
+env_variables:
+  NODE_ENV: 'production'
+
+handlers:
+# Serve static files from assets folder (Vite build output)
+- url: /assets/(.*)
+  static_files: assets/\1
+  upload: assets/.*
+  secure: always
+  expiration: "1d"
+
+- url: /styles.css
+  static_files: styles.css
+  upload: styles.css
+  secure: always
+
+- url: /app.js
+  static_files: app.js
+  upload: app.js
+  secure: always
+
+- url: /sw.js
+  static_files: sw.js
+  upload: sw.js
+  secure: always
+
+- url: /manifest.json
+  static_files: manifest.json
+  upload: manifest.json
+  secure: always
+
+- url: /icons/(.*)
+  static_files: icons/\1
+  upload: icons/.*
+  secure: always
+
+- url: /screenshots/(.*)
+  static_files: screenshots/\1
+  upload: screenshots/.*
+  secure: always
+
+- url: /js/(.*)
+  static_files: js/\1
+  upload: js/.*
+  secure: always
+
+- url: /lib/(.*)
+  static_files: lib/\1
+  upload: lib/.*
+  secure: always
+
+# Serve index.html for all other routes
+- url: /.*
+  static_files: index.html
+  upload: index.html
+  secure: always
+
+# Security headers
+default_expiration: "1h"
+
+# Made with Bob

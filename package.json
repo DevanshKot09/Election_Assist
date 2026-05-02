@@ -1,0 +1,68 @@
+{
+  "name": "indian-election-assistant",
+  "version": "1.1.0",
+  "description": "Comprehensive guide to Indian elections with voter registration, polling information, and civic education",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint . --ext .js",
+    "lint:fix": "eslint . --ext .js --fix",
+    "format": "prettier --write \"**/*.{js,json,css,html,md}\"",
+    "validate": "npm run lint && npm run test:coverage",
+    "prepare": "husky install"
+  },
+  "keywords": [
+    "indian-elections",
+    "voter-registration",
+    "election-commission",
+    "civic-education",
+    "democracy",
+    "voting-guide",
+    "epic-card",
+    "polling-booth",
+    "pwa",
+    "accessibility"
+  ],
+  "author": "Indian Election Assistant Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/indian-election-assistant.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/indian-election-assistant/issues"
+  },
+  "homepage": "https://github.com/yourusername/indian-election-assistant#readme",
+  "devDependencies": {
+    "@vitest/coverage-v8": "^1.0.4",
+    "@vitest/ui": "^1.0.4",
+    "eslint": "^8.55.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-accessibility": "^5.0.0",
+    "husky": "^8.0.3",
+    "jsdom": "^23.0.1",
+    "prettier": "^3.1.1",
+    "vite": "^5.0.8",
+    "vitest": "^1.0.4"
+  },
+  "dependencies": {},
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  },
+  "browserslist": [
+    "last 2 Chrome versions",
+    "last 2 Firefox versions",
+    "last 2 Safari versions",
+    "last 2 Edge versions",
+    "iOS >= 12",
+    "Android >= 90"
+  ]
+}

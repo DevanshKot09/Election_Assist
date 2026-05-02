@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Election Assistant - Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed-dim": "#ffb4ab",
+                    "on-secondary-container": "#5e6367",
+                    "on-primary-container": "#7796d1",
+                    "on-tertiary-container": "#ff6156",
+                    "surface-container-low": "#f6f3f2",
+                    "tertiary-container": "#650006",
+                    "secondary-container": "#dce0e4",
+                    "primary-container": "#002d62",
+                    "on-tertiary": "#ffffff",
+                    "surface": "#fcf9f8",
+                    "on-background": "#1b1b1b",
+                    "surface-container-highest": "#e5e2e1",
+                    "on-error": "#ffffff",
+                    "primary": "#00193c",
+                    "surface-container": "#f0eded",
+                    "secondary-fixed-dim": "#c3c7cb",
+                    "on-surface-variant": "#43474f",
+                    "inverse-on-surface": "#f3f0ef",
+                    "surface-container-lowest": "#ffffff",
+                    "error": "#ba1a1a",
+                    "tertiary": "#3e0002",
+                    "tertiary-fixed": "#ffdad6",
+                    "on-secondary": "#ffffff",
+                    "surface-variant": "#e5e2e1",
+                    "secondary": "#5a5f62",
+                    "on-primary": "#ffffff",
+                    "background": "#fcf9f8",
+                    "surface-bright": "#fcf9f8",
+                    "outline-variant": "#c4c6d1",
+                    "on-tertiary-fixed-variant": "#93000d",
+                    "on-secondary-fixed-variant": "#43474b",
+                    "on-secondary-fixed": "#171c1f",
+                    "outline": "#747781",
+                    "on-error-container": "#93000a",
+                    "secondary-fixed": "#dfe3e7",
+                    "on-primary-fixed-variant": "#24467c",
+                    "error-container": "#ffdad6",
+                    "inverse-surface": "#313030",
+                    "surface-tint": "#3e5e95",
+                    "primary-fixed-dim": "#abc7ff",
+                    "on-primary-fixed": "#001b3f",
+                    "primary-fixed": "#d7e2ff",
+                    "on-tertiary-fixed": "#410002",
+                    "surface-container-high": "#eae7e7",
+                    "surface-dim": "#dcd9d9",
+                    "inverse-primary": "#abc7ff",
+                    "on-surface": "#1b1b1b"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "gutter": "24px",
+                    "container-max": "1200px",
+                    "base": "8px",
+                    "margin-mobile": "16px",
+                    "stack-sm": "12px",
+                    "stack-md": "24px",
+                    "stack-lg": "48px"
+            },
+            "fontFamily": {
+                    "body-md": ["Public Sans"],
+                    "button": ["Public Sans"],
+                    "h1": ["Public Sans"],
+                    "h3": ["Public Sans"],
+                    "h2": ["Public Sans"],
+                    "label-caps": ["Public Sans"],
+                    "body-lg": ["Public Sans"]
+            },
+            "fontSize": {
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "button": ["16px", {"lineHeight": "1", "fontWeight": "600"}],
+                    "h1": ["40px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "h3": ["24px", {"lineHeight": "1.3", "fontWeight": "600"}],
+                    "h2": ["32px", {"lineHeight": "1.25", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "label-caps": ["12px", {"lineHeight": "1", "letterSpacing": "0.05em", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md selection:bg-primary-container selection:text-on-primary-container">
+<!-- TopAppBar -->
+<header class="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-gray-800 docked full-width top-0 z-50 sticky">
+<div class="flex justify-between items-center w-full px-6 h-16 max-w-7xl mx-auto font-['Public_Sans'] antialiased">
+<div class="text-lg font-bold tracking-tight text-blue-900 dark:text-slate-50 uppercase">
+                Election Assistant
+            </div>
+<nav class="hidden md:flex items-center space-x-8">
+<a class="text-blue-900 dark:text-blue-400 font-semibold border-b-2 border-blue-900 dark:border-blue-400 h-16 flex items-center transition-colors" href="#">Home</a>
+<a class="text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800 h-16 px-2 flex items-center transition-colors" href="#">Timeline</a>
+<a class="text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800 h-16 px-2 flex items-center transition-colors" href="#">Guide</a>
+<a class="text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800 h-16 px-2 flex items-center transition-colors" href="#">Search</a>
+</nav>
+<div class="flex items-center space-x-4">
+<button class="p-2 rounded-full hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors active:opacity-70">
+<span class="material-symbols-outlined text-blue-900 dark:text-blue-400">notifications</span>
+</button>
+<button class="p-2 rounded-full hover:bg-gray-50 dark:hover:bg-slate-800 transition-colors active:opacity-70">
+<span class="material-symbols-outlined text-blue-900 dark:text-blue-400">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-6 py-12 pb-24">
+<!-- Hero Section -->
+<section class="relative overflow-hidden rounded-xl bg-primary-container mb-stack-lg min-h-[400px] flex items-center">
+<div class="absolute inset-0 z-0">
+<img class="w-full h-full object-cover opacity-20 mix-blend-overlay" data-alt="A dignified and professional wide shot of a neoclassical government building with large stone columns under a clear, bright morning sky. The lighting is soft and authoritative, emphasizing institutional stability. The color palette is dominated by architectural greys and deep navy blues, maintaining a clean and trustworthy corporate modern aesthetic suitable for a civic information platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7XGEe3ej0gIDD4GBn5ckvmADpY8C6W3kiZYtV65xvJE1tYgyiIVDcoL5gYPKqum_qAJXeNH_F73gnb7YD489CTqKN8EWufP9x_b3FW5_qfzqhRTLc42wTnZ2ZCHTwea5k147OyKVy_yRG6cNL9vM72JHGvMF1aM7qDaMXU5ENqJaNwGUygjum-1WaB6p3V82xocrJTnd-0JijZ-Hm_zEQKpg67CCn0iKtSt0HS3LmENh_LzLxaYUUvzDyVlNlAy0daWTxToTtwvZe"/>
+</div>
+<div class="relative z-10 w-full px-gutter py-stack-lg max-w-3xl">
+<span class="font-label-caps text-label-caps text-on-primary-container mb-stack-sm block">YOUR VOTE, YOUR VOICE</span>
+<h1 class="font-h1 text-h1 text-white mb-stack-md">Your trusted partner in every election cycle.</h1>
+<p class="font-body-lg text-body-lg text-primary-fixed mb-stack-lg max-w-xl">
+                    Get personalized voting information, track upcoming deadlines, and understand the issues that matter to your community.
+                </p>
+<!-- Search Bar -->
+<div class="relative max-w-xl group">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-primary pointer-events-none">search</span>
+<input class="w-full h-14 pl-12 pr-4 rounded bg-white text-on-background border-none focus:ring-2 focus:ring-primary shadow-sm font-body-md transition-all" placeholder="Enter your zip code or address to find your election..." type="text"/>
+<button class="absolute right-2 top-1/2 -translate-y-1/2 bg-primary text-white font-button text-button px-6 h-10 rounded hover:opacity-90 transition-opacity">
+                        Search
+                    </button>
+</div>
+</div>
+</section>
+<!-- Bento Grid Quick Actions -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-stack-lg">
+<!-- Timeline Card -->
+<div class="bg-surface-container-low border border-outline-variant p-8 rounded-xl flex flex-col justify-between hover:border-primary transition-colors cursor-pointer group">
+<div>
+<span class="material-symbols-outlined text-4xl text-primary mb-4" style="font-variation-settings: 'FILL' 1;">event_note</span>
+<h3 class="font-h3 text-h3 text-on-background mb-2">Election Timeline</h3>
+<p class="font-body-md text-on-surface-variant">Stay ahead of key dates for registration, mail-in ballots, and primary elections.</p>
+</div>
+<div class="mt-8 flex items-center text-primary font-button">
+                    View Deadlines <span class="material-symbols-outlined ml-2 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+</div>
+<!-- Guide Card -->
+<div class="bg-surface-container-low border border-outline-variant p-8 rounded-xl flex flex-col justify-between hover:border-primary transition-colors cursor-pointer group">
+<div>
+<span class="material-symbols-outlined text-4xl text-primary mb-4" style="font-variation-settings: 'FILL' 1;">how_to_vote</span>
+<h3 class="font-h3 text-h3 text-on-background mb-2">Voting Guide</h3>
+<p class="font-body-md text-on-surface-variant">Compare candidates and understand complex ballot measures in simple, clear language.</p>
+</div>
+<div class="mt-8 flex items-center text-primary font-button">
+                    Explore Guide <span class="material-symbols-outlined ml-2 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+</div>
+<!-- Registration Status Card -->
+<div class="bg-surface-container-low border border-outline-variant p-8 rounded-xl flex flex-col justify-between hover:border-primary transition-colors cursor-pointer group">
+<div>
+<span class="material-symbols-outlined text-4xl text-primary mb-4" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<h3 class="font-h3 text-h3 text-on-background mb-2">Verify Registration</h3>
+<p class="font-body-md text-on-surface-variant">Make sure you're ready to vote by checking your current registration status in seconds.</p>
+</div>
+<div class="mt-8 flex items-center text-primary font-button">
+                    Check Status <span class="material-symbols-outlined ml-2 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</div>
+</div>
+</div>
+<!-- Featured Section: Asymmetric Content -->
+<section class="flex flex-col lg:flex-row gap-gutter items-center py-stack-lg">
+<div class="w-full lg:w-1/2">
+<div class="rounded-xl overflow-hidden aspect-video relative shadow-lg">
+<img class="w-full h-full object-cover" data-alt="A clean, minimalist composition of an official voting booth interior with soft overhead lighting. The scene is quiet and respectful, featuring a modern paper ballot and a simple black pen on a light grey surface. The environment uses a professional color scheme of white, grey, and deep navy blue, conveying a sense of civic duty and privacy in a corporate modern style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCckBVe2yJUPz0-qM9VtZ-Q7UtmPf5gHf2uGgth86nRShl-H9mjThhqWshNh4brbH6djlVOs-j4rZ0OzNDjxPq5umgWSUIGnTGF4uRSpucAal1V6BhAX575W0OZ9xuYB9MztaUJ_-NfqD3RZQX2LsCPRIYmdSsjIMsxg_SBJxG5P7JUHiiCyjc7fbbxYM5-Ar_9RaPEoZg1448W9A516aL4nc43czsecF1CShbluZE0ECVObkOC_17AdHu9pYAchJ3FKJkQxpMfZm7c"/>
+</div>
+</div>
+<div class="w-full lg:w-1/2 space-y-stack-md">
+<span class="font-label-caps text-label-caps text-primary tracking-widest">CIVIC EDUCATION</span>
+<h2 class="font-h2 text-h2 text-on-background">Empowering every citizen with non-partisan clarity.</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+                    We believe that a healthy democracy relies on informed participation. Our platform aggregates official data to provide you with the most accurate, up-to-date information without the noise of political commentary.
+                </p>
+<div class="space-y-4">
+<div class="flex items-start space-x-4">
+<div class="p-1 bg-secondary-container rounded">
+<span class="material-symbols-outlined text-primary">verified</span>
+</div>
+<div>
+<p class="font-button text-on-background">Official Data Sources</p>
+<p class="font-body-md text-on-surface-variant">Verified information directly from state and local election offices.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<div class="p-1 bg-secondary-container rounded">
+<span class="material-symbols-outlined text-primary">security</span>
+</div>
+<div>
+<p class="font-button text-on-background">Privacy Focused</p>
+<p class="font-body-md text-on-surface-variant">Your personal information and search history remain confidential.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Informational Banner -->
+<div class="mt-stack-lg bg-surface-container p-8 rounded-xl flex flex-col md:flex-row items-center justify-between border border-outline-variant">
+<div class="mb-stack-md md:mb-0">
+<h3 class="font-h3 text-h3 text-on-background">Ready to get involved?</h3>
+<p class="font-body-md text-on-surface-variant">Sign up for notifications about your local district's upcoming deadlines.</p>
+</div>
+<button class="bg-primary text-white font-button text-button px-8 py-4 rounded-full hover:opacity-90 active:scale-95 transition-all">
+                Get Notifications
+            </button>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 flex justify-around items-center px-2 h-16 bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-gray-800 shadow-[0_-1px_3px_0_rgba(0,0,0,0.05)] font-['Public_Sans'] text-[11px] font-medium">
+<a class="flex flex-col items-center justify-center text-blue-900 dark:text-blue-400 font-bold active:scale-95 transition-transform duration-100" href="#">
+<span class="material-symbols-outlined text-blue-900 dark:text-blue-400" style="font-variation-settings: 'FILL' 1;">home</span>
+            Home
+        </a>
+<a class="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800 active:scale-95 transition-transform duration-100" href="#">
+<span class="material-symbols-outlined">event_note</span>
+            Timeline
+        </a>
+<a class="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800 active:scale-95 transition-transform duration-100" href="#">
+<span class="material-symbols-outlined">how_to_vote</span>
+            Guide
+        </a>
+<a class="flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800 active:scale-95 transition-transform duration-100" href="#">
+<span class="material-symbols-outlined">search</span>
+            Search
+        </a>
+</nav>
+<!-- Footer for Desktop -->
+<footer class="hidden md:block bg-white border-t border-gray-200 py-12">
+<div class="max-w-7xl mx-auto px-6 grid grid-cols-4 gap-gutter">
+<div class="col-span-1">
+<div class="text-lg font-bold tracking-tight text-blue-900 uppercase mb-4">Election Assistant</div>
+<p class="text-body-md text-on-surface-variant">Promoting civic engagement through accessible information.</p>
+</div>
+<div>
+<h4 class="font-button text-on-background mb-4">Resources</h4>
+<ul class="space-y-2 text-on-surface-variant text-body-md">
+<li><a class="hover:text-primary transition-colors" href="#">Voting Rights</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Election Security</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Fact Checking</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-button text-on-background mb-4">Support</h4>
+<ul class="space-y-2 text-on-surface-variant text-body-md">
+<li><a class="hover:text-primary transition-colors" href="#">Help Center</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Contact Us</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Privacy Policy</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-button text-on-background mb-4">Social</h4>
+<div class="flex space-x-4">
+<span class="material-symbols-outlined text-primary cursor-pointer">share</span>
+<span class="material-symbols-outlined text-primary cursor-pointer">public</span>
+<span class="material-symbols-outlined text-primary cursor-pointer">mail</span>
+</div>
+</div>
+</div>
+<div class="max-w-7xl mx-auto px-6 mt-12 pt-8 border-t border-gray-100 text-center text-label-caps text-on-surface-variant">
+            © 2024 ELECTION ASSISTANT. ALL RIGHTS RESERVED. NON-PARTISAN SERVICE.
+        </div>
+</footer>
+</body></html>
