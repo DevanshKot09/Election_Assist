@@ -9,8 +9,8 @@
 
 'use strict';
 
-import { GCP_CONFIG, FEATURE_FLAGS } from './config.js';
-import { sanitizeInput, generateId } from './utils.js';
+import { GCP_CONFIG, FEATURE_FLAGS, SECURITY_CONFIG } from './config.js';
+import { sanitizeInput, generateId, validateAgainstSQLInjection, validateLength, validateUrl } from './utils.js';
 
 /**
  * Google Cloud Services Manager
@@ -25,6 +25,65 @@ class GoogleCloudServices {
     this.region = GCP_CONFIG.REGION;
     this.functionsUrl = GCP_CONFIG.FUNCTIONS_URL;
     this.initialized = false;
+    this.rateLimitMap = new Map(); // Track API call rates
+  }
+
+  /**
+   * Implements rate limiting for API calls
+   * @private
+   * @param {string} endpoint - API endpoint
+   * @returns {boolean} True if request is allowed
+   */
+  checkRateLimit(endpoint) {
+    const now = Date.now();
+    const key = `${endpoint}_${Math.floor(now / 60000)}`; // Per minute window
+    
+    if (!this.rateLimitMap.has(key)) {
+      this.rateLimitMap.set(key, 1);
+      // Clean up old entries
+      for (const [k] of this.rateLimitMap) {
+        if (!k.startsWith(endpoint) || k !== key) {
+          this.rateLimitMap.delete(k);
+        }
+      }
+      return true;
+    }
+
+    const count = this.rateLimitMap.get(key);
+    if (count >= SECURITY_CONFIG.RATE_LIMIT.MAX_API_CALLS_PER_MINUTE) {
+      console.warn(`Rate limit exceeded for ${endpoint}`);
+      return false;
+    }
+
+    this.rateLimitMap.set(key, count + 1);
+    return true;
+  }
+
+  /**
+   * Validates input data before sending to API
+   * @private
+   * @param {Object} data - Data to validate
+   * @returns {boolean} True if valid
+   * @throws {Error} If validation fails
+   */
+  validateInputData(data) {
+    if (!data || typeof data !== 'object') {
+      throw new Error('Invalid input data');
+    }
+
+    // Check for SQL injection attempts in all string values
+    for (const [key, value] of Object.entries(data)) {
+      if (typeof value === 'string') {
+        if (!validateAgainstSQLInjection(value)) {
+          throw new Error(`Potential SQL injection detected in ${key}`);
+        }
+        if (!validateLength(value, 0, SECURITY_CONFIG.MAX_INPUT_LENGTH)) {
+          throw new Error(`Input ${key} exceeds maximum length`);
+        }
+      }
+    }
+
+    return true;
   }
 
   /**
@@ -86,24 +145,59 @@ class GoogleCloudServices {
       return { success: false, message: 'Cloud Functions disabled' };
     }
 
+    // Rate limiting check
+    if (!this.checkRateLimit(functionName)) {
+      return {
+        success: false,
+        error: 'Rate limit exceeded. Please try again later.',
+        code: 'RATE_LIMIT_EXCEEDED'
+      };
+    }
+
     try {
+      // Validate input data
+      this.validateInputData(data);
+
       const url = `${this.functionsUrl}/${functionName}`;
+      
+      // Validate URL
+      if (!validateUrl(url)) {
+        throw new Error('Invalid function URL');
+      }
+
       const response = await fetch(url, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest' // CSRF protection
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
+        credentials: 'same-origin', // Security: only send cookies to same origin
+        mode: 'cors'
       });
 
       if (!response.ok) {
-        throw new Error(`Cloud Function error: ${response.statusText}`);
+        const errorText = await response.text();
+        throw new Error(`Cloud Function error: ${response.statusText} - ${errorText}`);
       }
 
-      return await response.json();
+      const result = await response.json();
+      
+      // Validate response structure
+      if (typeof result !== 'object') {
+        throw new Error('Invalid response format');
+      }
+
+      return result;
     } catch (error) {
       console.error(`Error calling Cloud Function ${functionName}:`, error);
-      return { success: false, error: error.message };
+      
+      // Don't expose internal error details to client
+      return {
+        success: false,
+        error: error.message.includes('Rate limit') ? error.message : 'Service temporarily unavailable',
+        code: error.message.includes('Rate limit') ? 'RATE_LIMIT_EXCEEDED' : 'SERVICE_ERROR'
+      };
     }
   }
 
@@ -116,8 +210,19 @@ class GoogleCloudServices {
    * const result = await cloudServices.verifyVoterRegistration('ABC1234567', 'John Doe');
    */
   async verifyVoterRegistration(voterId, name) {
+    // Enhanced validation
+    if (!voterId || !name) {
+      return { success: false, error: 'Voter ID and name are required' };
+    }
+
+    // Validate voter ID format (Indian EPIC format: 3 letters + 7 digits)
+    const epicPattern = /^[A-Z]{3}[0-9]{7}$/i;
+    if (!epicPattern.test(voterId)) {
+      return { success: false, error: 'Invalid voter ID format' };
+    }
+
     return await this.callCloudFunction('verifyVoter', {
-      voterId: sanitizeInput(voterId),
+      voterId: sanitizeInput(voterId.toUpperCase()),
       name: sanitizeInput(name),
       timestamp: new Date().toISOString()
     });
@@ -131,6 +236,14 @@ class GoogleCloudServices {
    * const booth = await cloudServices.searchPollingBooth('110001');
    */
   async searchPollingBooth(location) {
+    if (!location || typeof location !== 'string') {
+      return { success: false, error: 'Location is required' };
+    }
+
+    if (!validateLength(location, 1, 200)) {
+      return { success: false, error: 'Location must be between 1 and 200 characters' };
+    }
+
     return await this.callCloudFunction('searchPollingBooth', {
       location: sanitizeInput(location),
       timestamp: new Date().toISOString()
@@ -177,14 +290,34 @@ class GoogleCloudServices {
    */
   async uploadToCloudStorage(file, folder = 'uploads') {
     try {
+      // Validate file
+      if (!file || !(file instanceof File)) {
+        throw new Error('Invalid file');
+      }
+
+      // Check file size
+      if (file.size > SECURITY_CONFIG.MAX_FILE_SIZE) {
+        throw new Error(`File size exceeds maximum of ${SECURITY_CONFIG.MAX_FILE_SIZE / (1024 * 1024)}MB`);
+      }
+
+      // Validate file type (whitelist approach)
+      const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf'];
+      if (!allowedTypes.includes(file.type)) {
+        throw new Error('File type not allowed');
+      }
+
+      // Sanitize folder name
+      const sanitizedFolder = sanitizeInput(folder).replace(/[^a-zA-Z0-9-_]/g, '');
+
       const formData = new FormData();
       formData.append('file', file);
-      formData.append('folder', folder);
+      formData.append('folder', sanitizedFolder);
       formData.append('bucket', GCP_CONFIG.STORAGE_BUCKET);
 
       const response = await fetch(`${this.functionsUrl}/uploadFile`, {
         method: 'POST',
-        body: formData
+        body: formData,
+        credentials: 'same-origin'
       });
 
       if (!response.ok) {
@@ -234,10 +367,19 @@ class GoogleCloudServices {
       return this.getFallbackResponse(question);
     }
 
+    // Validate question
+    if (!question || typeof question !== 'string') {
+      return { success: false, error: 'Question is required' };
+    }
+
+    if (!validateLength(question, 1, SECURITY_CONFIG.MAX_INPUT_LENGTH)) {
+      return { success: false, error: 'Question length invalid' };
+    }
+
     try {
       return await this.callCloudFunction('chatbot', {
         question: sanitizeInput(question),
-        context: context.slice(-5), // Last 5 messages for context
+        context: Array.isArray(context) ? context.slice(-5) : [], // Last 5 messages for context
         timestamp: new Date().toISOString()
       });
     } catch (error) {

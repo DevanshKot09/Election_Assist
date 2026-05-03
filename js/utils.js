@@ -9,17 +9,70 @@
 'use strict';
 
 /**
- * Sanitizes user input to prevent XSS attacks
+ * Sanitizes user input to prevent XSS attacks with enhanced protection
  * @param {string} input - Raw user input
+ * @param {Object} options - Sanitization options
+ * @param {boolean} options.allowHtml - Allow safe HTML tags (default: false)
+ * @param {number} options.maxLength - Maximum length (default: 500)
  * @returns {string} Sanitized input
+ * @throws {Error} If input exceeds maximum length
  * @example
- * sanitizeInput('<script>alert("xss")</script>') // Returns: 'scriptalert("xss")/script'
+ * sanitizeInput('<script>alert("xss")</script>') // Returns: 'scriptalert(xss)/script'
+ * sanitizeInput('Hello & goodbye', { allowHtml: false }) // Returns: 'Hello  goodbye'
  */
-export function sanitizeInput(input) {
+export function sanitizeInput(input, options = {}) {
   if (typeof input !== 'string') {
     return '';
   }
-  return input.replace(/[<>]/g, '').trim();
+
+  const { allowHtml = false, maxLength = 500 } = options;
+
+  // Check length
+  if (input.length > maxLength) {
+    throw new Error(`Input exceeds maximum length of ${maxLength} characters`);
+  }
+
+  // Remove null bytes
+  let sanitized = input.replace(/\0/g, '');
+
+  // Enhanced XSS protection - remove dangerous characters
+  if (!allowHtml) {
+    // Replace HTML special characters with safe equivalents
+    sanitized = sanitized
+      .replace(/&/g, '')
+      .replace(/</g, '')
+      .replace(/>/g, '')
+      .replace(/"/g, '')
+      .replace(/'/g, '')
+      .replace(/\//g, '');
+  }
+
+  // Remove potential script injections
+  sanitized = sanitized
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+    .replace(/javascript:/gi, '')
+    .replace(/on\w+\s*=/gi, '')
+    .replace(/eval\(/gi, '')
+    .replace(/expression\(/gi, '');
+
+  return sanitized.trim();
+}
+
+/**
+ * Validates and sanitizes input against SQL injection patterns
+ * @param {string} input - Input to validate
+ * @returns {boolean} True if input is safe
+ * @example
+ * validateAgainstSQLInjection("SELECT * FROM users") // Returns: false
+ * validateAgainstSQLInjection("John Doe") // Returns: true
+ */
+export function validateAgainstSQLInjection(input) {
+  if (typeof input !== 'string') {
+    return false;
+  }
+
+  const sqlPattern = /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION|SCRIPT|DECLARE|CAST|CONVERT)\b)/gi;
+  return !sqlPattern.test(input);
 }
 
 /**
@@ -233,9 +286,54 @@ export function truncateText(text, maxLength) {
  * escapeHtml('<div>Test</div>') // Returns: '<div>Test</div>'
  */
 export function escapeHtml(html) {
-  const div = document.createElement('div');
-  div.textContent = html;
-  return div.innerHTML;
+  if (typeof html !== 'string') {
+    return '';
+  }
+
+  const htmlEscapeMap = {
+    '&': '&',
+    '<': '<',
+    '>': '>',
+    '"': '"',
+    "'": '&#x27;',
+    '/': '&#x2F;'
+  };
+
+  return html.replace(/[&<>"'/]/g, (char) => htmlEscapeMap[char]);
+}
+
+/**
+ * Validates input length
+ * @param {string} input - Input to validate
+ * @param {number} minLength - Minimum length
+ * @param {number} maxLength - Maximum length
+ * @returns {boolean} True if valid
+ * @example
+ * validateLength('test', 1, 10) // Returns: true
+ */
+export function validateLength(input, minLength = 0, maxLength = 500) {
+  if (typeof input !== 'string') {
+    return false;
+  }
+  return input.length >= minLength && input.length <= maxLength;
+}
+
+/**
+ * Validates URL format and protocol
+ * @param {string} url - URL to validate
+ * @param {Array<string>} allowedProtocols - Allowed protocols (default: ['http:', 'https:'])
+ * @returns {boolean} True if valid
+ * @example
+ * validateUrl('https://example.com') // Returns: true
+ * validateUrl('javascript:alert(1)') // Returns: false
+ */
+export function validateUrl(url, allowedProtocols = ['http:', 'https:']) {
+  try {
+    const urlObj = new URL(url);
+    return allowedProtocols.includes(urlObj.protocol);
+  } catch {
+    return false;
+  }
 }
 
 /**
@@ -323,6 +421,7 @@ export function lazyLoadImage(img) {
 
 export default {
   sanitizeInput,
+  validateAgainstSQLInjection,
   debounce,
   formatDate,
   calculateDistance,
@@ -338,6 +437,8 @@ export default {
   truncateText,
   escapeHtml,
   validateEmail,
+  validateLength,
+  validateUrl,
   getQueryParam,
   throttle,
   isInViewport,

@@ -67,8 +67,12 @@ export const GCP_CONFIG = {
  * @constant {Object}
  */
 export const MAPS_CONFIG = {
-  /** @type {string} Google Maps API key */
-  API_KEY: 'AIzaSyALjAGF1c9vSSItpLtn2VnBPAE6DkIeVO4',
+  /** @type {string} Google Maps API key - Load from environment */
+  API_KEY: typeof process !== 'undefined' && process.env?.VITE_GOOGLE_MAPS_API_KEY
+    ? process.env.VITE_GOOGLE_MAPS_API_KEY
+    : (typeof import.meta !== 'undefined' && import.meta.env?.VITE_GOOGLE_MAPS_API_KEY)
+      ? import.meta.env.VITE_GOOGLE_MAPS_API_KEY
+      : '',
 
   /** @type {Array<string>} Required libraries */
   LIBRARIES: ['places', 'geometry'],
@@ -102,13 +106,21 @@ export const ANALYTICS_CONFIG = {
  * @constant {Object}
  */
 export const FIREBASE_CONFIG = {
-  apiKey: 'YOUR_API_KEY',
+  apiKey: typeof import.meta !== 'undefined' && import.meta.env?.VITE_FIREBASE_API_KEY
+    ? import.meta.env.VITE_FIREBASE_API_KEY
+    : '',
   authDomain: 'prompt-war-submission-1.firebaseapp.com',
   projectId: 'prompt-war-submission-1',
   storageBucket: 'prompt-war-submission-1.appspot.com',
-  messagingSenderId: '123456789',
-  appId: '1:123456789:web:abcdef',
-  measurementId: 'G-XXXXXXXXXX'
+  messagingSenderId: typeof import.meta !== 'undefined' && import.meta.env?.VITE_FIREBASE_MESSAGING_SENDER_ID
+    ? import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID
+    : '',
+  appId: typeof import.meta !== 'undefined' && import.meta.env?.VITE_FIREBASE_APP_ID
+    ? import.meta.env.VITE_FIREBASE_APP_ID
+    : '',
+  measurementId: typeof import.meta !== 'undefined' && import.meta.env?.VITE_FIREBASE_MEASUREMENT_ID
+    ? import.meta.env.VITE_FIREBASE_MEASUREMENT_ID
+    : ''
 };
 
 /**
@@ -158,14 +170,52 @@ export const SECURITY_CONFIG = {
   /** @type {Array<string>} Allowed origins for CORS */
   ALLOWED_ORIGINS: [
     'https://prompt-war-submission-1.web.app',
-    'https://prompt-war-submission-1.firebaseapp.com'
+    'https://prompt-war-submission-1.firebaseapp.com',
+    'http://localhost:5173', // Development only
+    'http://localhost:3000'  // Development only
   ],
 
   /** @type {number} Maximum input length */
   MAX_INPUT_LENGTH: 500,
 
-  /** @type {RegExp} Input sanitization pattern */
-  SANITIZE_PATTERN: /[<>]/g
+  /** @type {number} Maximum file upload size (5MB) */
+  MAX_FILE_SIZE: 5 * 1024 * 1024,
+
+  /** @type {RegExp} Input sanitization pattern - Enhanced XSS protection */
+  SANITIZE_PATTERN: /[<>'"&]/g,
+
+  /** @type {RegExp} SQL injection pattern detection */
+  SQL_INJECTION_PATTERN: /(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION|SCRIPT)\b)/gi,
+
+  /** @type {Object} Rate limiting configuration */
+  RATE_LIMIT: {
+    MAX_REQUESTS: 100,
+    WINDOW_MS: 15 * 60 * 1000, // 15 minutes
+    MAX_API_CALLS_PER_MINUTE: 20
+  },
+
+  /** @type {Object} Content Security Policy */
+  CSP: {
+    'default-src': ["'self'"],
+    'script-src': ["'self'", "'unsafe-inline'", 'https://maps.googleapis.com', 'https://www.googletagmanager.com'],
+    'style-src': ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+    'font-src': ["'self'", 'https://fonts.gstatic.com'],
+    'img-src': ["'self'", 'data:', 'https:', 'blob:'],
+    'connect-src': ["'self'", 'https://maps.googleapis.com', 'https://*.cloudfunctions.net', 'https://firestore.googleapis.com'],
+    'frame-ancestors': ["'none'"],
+    'base-uri': ["'self'"],
+    'form-action': ["'self'"]
+  },
+
+  /** @type {Object} Security headers */
+  HEADERS: {
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'SAMEORIGIN',
+    'X-XSS-Protection': '1; mode=block',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Permissions-Policy': 'geolocation=(self), microphone=(), camera=()',
+    'Strict-Transport-Security': 'max-age=31536000; includeSubDomains'
+  }
 };
 
 /**
